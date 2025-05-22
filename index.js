@@ -60,6 +60,14 @@ app.get("/category/:name", async (req, res) => {
     }
 });
 
+const getRandomProducts = (count, products) => {
+    const copy = [...products];
+
+    return Array(count).fill().map(() => {
+        let randomSelect = Math.floor(Math.random() * copy.length);
+        return copy.splice(randomSelect, 1)[0];
+    });
+}
 
 app.get("/products/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
@@ -72,9 +80,12 @@ app.get("/products/:id", async (req, res) => {
         
         const otherProducts = allProducts.data.filter(product => product.id !== productId);
 
+        const maxProduct = 12;
+        const limitedProductsDisplay = getRandomProducts(12, otherProducts);
+
         res.render("product", {
             product: selectedProduct.data,
-            otherProducts
+            limitedProductsDisplay
         });
     } catch (error) {
         console.error("Error to select product: ", error.message);

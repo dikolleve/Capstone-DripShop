@@ -17,8 +17,17 @@
 </div>
 
 <!-- display other product that might also like -->
-<% otherProducts.map(o => { %>
-    <p><%= o.title %></p>
-<%  }); %>
+<div class="container mx-auto">
+    <h1 class="text-2xl font-semibold mb-5">You might also like:</h1>
+    <div class="grid grid-cols-4 gap-5">
+        <% limitedProductsDisplay.map(product => { %>
+            <a href="/products/<%= product.id %>" class="border shadow hover:shadow-md rounded p-5">
+                <img src="<%= product.image %>" alt="" class="h-40 w-full object-contain mb-3">
+                <p class="text-sm font-semibold truncate"><%= product.title %></p>
+                <p class="text-blue-600">$<%= product.price %></p>
+            </a>
+        <% }); %>
+    </div>
+</div>
 
 <%- include("partials/footer") %>
