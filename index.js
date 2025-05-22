@@ -24,12 +24,12 @@ const getCategories = async () => {
 /********** view products all products / home **********/
 app.get("/", async (req, res) => {
     try {
-        const [productRes, categories] = await Promise.all([
+        const [selectedProduct, categories] = await Promise.all([
             axios.get(`${API_URL}/products`),
             getCategories()
         ]);
         res.render("index", {
-            products: productRes.data,
+            products: selectedProduct.data,
             allCategories: categories,
             activeCategory: "All",
             pageTitle: "All Products"
@@ -64,9 +64,17 @@ app.get("/category/:name", async (req, res) => {
 app.get("/products/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
     try {
-        const productRes = await axios.get(`${API_URL}/products/${productId}`);
+        //const selectedProduct = await axios.get(`${API_URL}/products/${productId}`);
+        const [selectedProduct, allProducts] = await Promise.all([
+            axios.get(`${API_URL}/products/${productId}`),
+            axios.get(`${API_URL}/products`)
+        ]);
+        
+        const otherProducts = allProducts.data.filter(product => product.id !== productId);
+
         res.render("product", {
-            products: productRes.data
+            product: selectedProduct.data,
+            otherProducts
         });
     } catch (error) {
         console.error("Error to select product: ", error.message);
