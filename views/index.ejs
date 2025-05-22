@@ -11,7 +11,7 @@
                 <h2 class="truncate font-semibold"><%= product.title %></h2>
                 <p class="text-blue-700 font-bold">$<%= product.price %></p>          
             </a>
-            <a href="#" class="text-sm text-gray-600 mb-2 inline-block hover:underline">
+            <a href="/category/<%= product.category %>" class="text-sm text-gray-600 mb-2 inline-block hover:underline">
                 Category: <%= product.category %>
             </a>
             <button class="bg-blue-600 text-white px-3 py-2 rounded w-full">Add to Cart</button>
