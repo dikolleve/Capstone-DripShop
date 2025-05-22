@@ -31,7 +31,8 @@ app.get("/", async (req, res) => {
         res.render("index", {
             products: productRes.data,
             allCategories: categories,
-            activeCategory: "All"
+            activeCategory: "All",
+            pageTitle: "All Products"
         });
     } catch (error) {
         console.error("Error to fetch products: ", error.message);
@@ -50,11 +51,26 @@ app.get("/category/:name", async (req, res) => {
         res.render("index", {
             products: categoryRes.data,
             allCategories: categories,
-            activeCategory: category
+            activeCategory: category,
+            pageTitle: `Category: ${category}`
         })
     } catch (error) {
         console.error("Error to view category of products: ", error.message);
         res.status(500).send("Failed to view category of products");
+    }
+});
+
+
+app.get("/products/:id", async (req, res) => {
+    const productId = parseInt(req.params.id);
+    try {
+        const productRes = await axios.get(`${API_URL}/products/${productId}`);
+        res.render("product", {
+            products: productRes.data
+        });
+    } catch (error) {
+        console.error("Error to select product: ", error.message);
+        res.status(500).send("Failed to select product.");
     }
 });
 
