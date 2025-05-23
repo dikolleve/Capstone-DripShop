@@ -1,0 +1,27 @@
+<%- include("partials/header") %>
+<%- include("partials/navbar") %>
+
+<div class="container mx-auto">
+    <h1 class="text-2xl font-semibold mt-5">Checkout</h1>
+    <div class="flex flex-col space-y-3 mt-5">
+        <% let total = 0 %>
+        <% cart.map(item => { %>
+            <% total += (item.price * item.quantity) %>
+            <div class="border shadow flex justify-between p-4 rounded">
+                <div>
+                    <p class="font-semibold"><%= item.title %></p>
+                    <p class="text-gray-600 text-sm">$<%= item.price %> x <%= item.quantity %></p>
+                </div>
+                <div class="font-semibold">
+                    $<%= item.price * item.quantity %>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+    <h2 class="text-xl font-semibold mt-5">Total: $<%= total %></h2>
+    <form action="/checkout" method="post">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white mt-4 px-3 py-2 rounded transition duration-300">Place Order</button>
+    </form>
+</div>
+
+<%- include("partials/footer") %>
