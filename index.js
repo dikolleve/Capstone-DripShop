@@ -145,6 +145,7 @@ app.get("/checkout", (req, res) => {
     }
 });
 
+/********** to display success once place order clicked **********/
 app.get("/thankyou", (req, res) => {
     try {
         res.render("thankyou");
@@ -240,6 +241,19 @@ app.post("/checkout", (req, res) => {
     } catch (error) {
         console.error("Error to proceed place order: ", error.message);
         res.status(500).send("Failed to proceed place order");
+    }
+});
+
+/********** to remove item from cart **********/
+app.post("/cart/remove/:id", (req, res) => {
+    const productId = parseInt(req.params.id);
+    try {
+        req.session.cart = req.session.cart.filter(item => item.id !== productId);
+
+        res.redirect("/cart");
+    } catch (error) {
+        console.error("Error to remove item: ", error.message);
+        res.status(500).send("Failed to remove item");
     }
 });
 

@@ -20,8 +20,8 @@
                         <form action="/cart/increase/<%= item.id %>" method="post">
                             <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-sm rounded px-2">+</button>
                         </form>
-                        <form action="">
-                            <button class="bg-red-300 hover:bg-red-400 text-sm rounded px-2">x</button>
+                        <form action="/cart/remove/<%= item.id %>" method="post">
+                            <button type="submit" class="bg-red-300 hover:bg-red-400 text-sm rounded px-2">x</button>
                         </form>
                     </div>
                 </div>
