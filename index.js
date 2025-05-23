@@ -123,6 +123,7 @@ app.get("/products/:id", async (req, res) => {
     }
 });
 
+/********** link to cart and to view products selected added to cart  **********/
 app.get("/cart", (req, res) => {
     try {
         const cart = req.session.cart || [];
@@ -138,14 +139,12 @@ app.post("/add-to-cart/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
     try {
         const selectedProduct = await axios.get(`${API_URL}/products/${productId}`);
-        console.log(selectedProduct.data);
 
         if(!req.session.cart) {
             req.session.cart = [];
         }
 
         const existing = req.session.cart.find(item => item.id === productId);
-        console.log(req.session.cart);
 
         if(existing) {
             existing.quantity += 1;
@@ -157,6 +156,59 @@ app.post("/add-to-cart/:id", async (req, res) => {
     } catch (error) {
         console.error("Error to add to cart: ", error.message);
         res.status(500).send("Failed to add to cart.");
+    }
+});
+
+//Objects and Arrays in JavaScript Are Stored by Reference
+//This means:
+//When you assign an object or array to a variable, you're storing a reference (a pointer to its place in memory), 
+//not a copy of the data.
+// let a = { name: "Apple" };
+// let b = a;
+// b.name = "Banana";
+// console.log(a.name); // Banana — because a and b point to the same object
+/********** add button to increase quantity **********/
+app.post("/cart/increase/:id", (req, res) => {
+    const productId = parseInt(req.params.id);
+    try {
+        const cart = req.session.cart || [];
+        const existing = cart.find(item => item.id === productId);
+
+        if(existing) {
+            existing.quantity++;
+        }
+        res.redirect("/cart");
+
+    } catch (error) {
+        console.error("Error to add quantity your product selected: ", error.message);
+        res.status(500).send("Failed to add quantity your product selected");
+    }
+});
+
+//Objects and Arrays in JavaScript Are Stored by Reference
+//This means:
+//When you assign an object or array to a variable, you're storing a reference (a pointer to its place in memory), 
+//not a copy of the data.
+// let a = { name: "Apple" };
+// let b = a;
+// b.name = "Banana";
+// console.log(a.name); // Banana — because a and b point to the same object
+/********** less button to decrease quantity **********/
+app.post("/cart/decrease/:id", (req, res) => {
+    const productId = parseInt(req.params.id);
+    try {
+        const cart = req.session.cart || [];
+        const existing = cart.find(item => item.id === productId);
+
+        if(existing && existing.quantity > 1) {
+            existing.quantity--;
+        }else{
+            req.session.cart = cart.filter(item => item.id !== productId);
+        }
+        res.redirect("/cart");
+    } catch (error) {
+        console.error("Error to descrease quantity your product selected: ", error.message);
+        res.status(500).send("failed to descrease quantity your product selected")
     }
 });
 
