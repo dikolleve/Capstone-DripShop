@@ -16,7 +16,9 @@
                 <a href="/category/<%= product.category %>" class="text-sm text-gray-600 mb-2 inline-block hover:underline">
                     Category: <%= product.category %>
                 </a>
-                <button class="bg-blue-600 hover:bg-blue-700 transition duration-300 text-white px-3 py-2 rounded w-full">Add to Cart</button>
+                <form action="/add-to-cart/<%= product.id %>" method="post">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 transition duration-300 text-white px-3 py-2 rounded w-full">Add to Cart</button>
+                </form>
             </div>
         <% }); %>
     </div>

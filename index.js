@@ -15,6 +15,28 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
 
+app.use(session({
+  secret: '#drip~shop?', // change this in production
+  resave: false,
+  saveUninitialized: true
+}));
+
+// To ensure the cart count is always up-to-date when you navigate back to home, 
+// you can force the browser to not cache the page.
+// This tells the browser not to cache the page, so it always gets a 
+// fresh version from the server — which means cartCount will be up-to-date.
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+// This ensures that after any redirect (like from the product page to /cart),
+// the cart count shows the updated number.
+app.use((req, res, next) => {
+    res.locals.cartCount = req.session.cart ? req.session.cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
+    next();
+});
+
 /********** retrieve all product categories **********/
 const getCategories = async () => {
     const response = await axios.get(`${API_URL}/products/categories`);
@@ -60,8 +82,12 @@ app.get("/category/:name", async (req, res) => {
     }
 });
 
+/********** get random products limit to 12 **********/
 const getRandomProducts = (count, products) => {
     const copy = [...products];
+
+    // uses Math.min to control to avoid errors on displaying limited products
+    count = Math.min(count, products.length);
 
     return Array(count).fill().map(() => {
         let randomSelect = Math.floor(Math.random() * copy.length);
@@ -69,27 +95,57 @@ const getRandomProducts = (count, products) => {
     });
 }
 
+/********** display selected product  **********/
 app.get("/products/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
     try {
-        //const selectedProduct = await axios.get(`${API_URL}/products/${productId}`);
-        const [selectedProduct, allProducts] = await Promise.all([
+        const [selectedProduct, allProducts, categories] = await Promise.all([
             axios.get(`${API_URL}/products/${productId}`),
-            axios.get(`${API_URL}/products`)
+            axios.get(`${API_URL}/products`),
+            getCategories()
         ]);
         
         const otherProducts = allProducts.data.filter(product => product.id !== productId);
 
+        //to display a limit of 12 random products
         const maxProduct = 12;
-        const limitedProductsDisplay = getRandomProducts(12, otherProducts);
+        const limitedProductsDisplay = getRandomProducts(maxProduct, otherProducts);
 
         res.render("product", {
             product: selectedProduct.data,
-            limitedProductsDisplay
+            limitedProductsDisplay,
+            activeCategory: selectedProduct.data.category,
+            allCategories: categories
         });
     } catch (error) {
         console.error("Error to select product: ", error.message);
         res.status(500).send("Failed to select product.");
+    }
+});
+
+app.post("/add-to-cart/:id", async (req, res) => {
+    const productId = parseInt(req.params.id);
+    try {
+        const selectedProduct = await axios.get(`${API_URL}/products/${productId}`);
+        console.log(selectedProduct.data);
+
+        if(!req.session.cart) {
+            req.session.cart = [];
+        }
+
+        const existing = req.session.cart.find(item => item.id === productId);
+        console.log(req.session.cart);
+
+        if(existing) {
+            existing.quantity += 1;
+        }else{
+            req.session.cart.push({...selectedProduct.data, quantity: 1})
+        }
+        res.redirect("/");
+
+    } catch (error) {
+        console.error("Error to add to cart: ", error.message);
+        res.status(500).send("Failed to add to cart.");
     }
 });
 

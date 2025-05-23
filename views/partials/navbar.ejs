@@ -10,6 +10,9 @@
                 <% }); %>
             <% } %>
         </nav>
-        <p>🛒 Cart</p>
+        <p>🛒 Cart 
+            <% if(cartCount > 0) { %>
+                <span class="rounded-full bg-red-600 text-xs text-white px-2 py-0.5"><%= cartCount %></span></p>
+            <% }  %>         
     </header>
 </div>
