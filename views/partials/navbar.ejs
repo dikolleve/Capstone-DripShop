@@ -1,15 +1,16 @@
 <div class="bg-white shadow-md sticky top-0 z-50">
     <header class="container mx-auto flex flex-col md:flex-row items-center justify-between p-3">
         <h1 class="text-2xl font-semibold">DripShop</h1>
-        <nav class="hidden flex-col md:flex md:flex-row gap-x-5">
-            <a href="/" class="<%= activeCategory === 'All' ? 'bg-blue-400  text-white' : 'text-blue-700 hover:underline' %> px-3 py-1 rounded capitalize">All</a>
-            <% if(allCategories !== undefined) { %>
+        <% if(typeof allCategories !== 'undefined') { %>
+            <nav class="hidden flex-col md:flex md:flex-row gap-x-5">
+                <a href="/" class="<%= activeCategory === 'All' ? 'bg-blue-400  text-white' : 'text-blue-700 hover:underline' %> px-3 py-1 rounded capitalize">All</a>
                 <% allCategories.map(category => { %>
                     <!--  Use encodeURIComponent() to safely link categories like men's clothing.-->
                     <a href="/category/<%= encodeURIComponent(category) %>" class="<%= activeCategory === category ? 'bg-blue-400  text-white' : 'text-blue-700 hover:underline' %> px-3 py-1 rounded capitalize"><%= category %></a>
                 <% }); %>
-            <% } %>
-        </nav>
+            </nav>
+        <% } %>
+        
         <p>🛒 Cart 
             <% if(cartCount > 0) { %>
                 <span class="rounded-full bg-red-600 text-xs text-white px-2 py-0.5"><%= cartCount %></span></p>

@@ -123,6 +123,17 @@ app.get("/products/:id", async (req, res) => {
     }
 });
 
+app.get("/cart", (req, res) => {
+    try {
+        const cart = req.session.cart || [];
+        res.render("cart", { cart })
+    } catch (error) {
+        console.error("Error to display cart: ", error.message);
+        res.status(500).send("Failed to display cart");
+    }
+});
+
+/********** clicking add to cart to display the selected product(s) **********/
 app.post("/add-to-cart/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
     try {
@@ -141,7 +152,7 @@ app.post("/add-to-cart/:id", async (req, res) => {
         }else{
             req.session.cart.push({...selectedProduct.data, quantity: 1})
         }
-        res.redirect("/");
+        res.redirect("/cart");
 
     } catch (error) {
         console.error("Error to add to cart: ", error.message);
