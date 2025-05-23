@@ -145,6 +145,15 @@ app.get("/checkout", (req, res) => {
     }
 });
 
+app.get("/thankyou", (req, res) => {
+    try {
+        res.render("thankyou");
+    } catch (error) {
+        console.error("Error to proceed place order: ", error.message);
+        res.status(500).send("Failed to proceed place order.");
+    }
+});
+
 /********** clicking add to cart to display the selected product(s) **********/
 app.post("/add-to-cart/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
@@ -223,6 +232,7 @@ app.post("/cart/decrease/:id", (req, res) => {
     }
 });
 
+/********** proceeding to placeholder **********/
 app.post("/checkout", (req, res) => {
     try {
         req.session.cart = [];
