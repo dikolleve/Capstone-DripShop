@@ -46,12 +46,12 @@ const getCategories = async () => {
 /********** view products all products / home **********/
 app.get("/", async (req, res) => {
     try {
-        const [selectedProduct, categories] = await Promise.all([
+        const [productLists, categories] = await Promise.all([
             axios.get(`${API_URL}/products`),
             getCategories()
         ]);
         res.render("index", {
-            products: selectedProduct.data,
+            products: productLists.data,
             allCategories: categories,
             activeCategory: "All",
             pageTitle: "All Products"
@@ -156,6 +156,21 @@ app.get("/thankyou", (req, res) => {
 });
 
 /********** clicking add to cart to display the selected product(s) **********/
+//Objects and Arrays in JavaScript Are Stored by Reference
+/*let names = [{id:1, name: "luffy"}, {id:2, name: "zorro"}, {id:3, name: "nami"}];
+let existing = names.find(name => name.id === 2);
+
+if(existing) {
+    existing.power = "85%";
+}
+console.log(existing);
+console.log(names);
+{ id: 2, name: 'zorro', power: '85%' }
+[
+  { id: 1, name: 'luffy' },
+  { id: 2, name: 'zorro', power: '85%' },
+  { id: 3, name: 'nami' }
+]*/
 app.post("/add-to-cart/:id", async (req, res) => {
     const productId = parseInt(req.params.id);
     try {
